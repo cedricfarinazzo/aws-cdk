@@ -1,4 +1,3 @@
-
 import * as fs from 'fs';
 import { kebab as toKebabCase } from 'case';
 import { Construct } from 'constructs';
@@ -282,6 +281,13 @@ export interface BucketDeploymentProps {
    * @default true
    */
   readonly outputObjectKeys?: boolean;
+
+  /**
+   * Additional options to pass to the `aws s3 sync` command.
+   *
+   * @default []
+   */
+  readonly syncOptions?: string[];
 }
 
 /**
@@ -440,6 +446,7 @@ export class BucketDeployment extends Construct {
         DistributionPaths: props.distributionPaths,
         SignContent: props.signContent,
         OutputObjectKeys: props.outputObjectKeys ?? true,
+        SyncOptions: props.syncOptions ?? [],
         // Passing through the ARN sequences dependency on the deployment
         DestinationBucketArn: cdk.Lazy.string({ produce: () => this.requestDestinationArn ? this.destinationBucket.bucketArn : undefined }),
       },
