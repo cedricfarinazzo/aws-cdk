@@ -1721,3 +1721,21 @@ test('outputObjectKeys default value is true', () => {
     OutputObjectKeys: true,
   });
 });
+
+test('syncOptions are passed correctly to the custom resource', () => {
+  // GIVEN
+  const stack = new cdk.Stack();
+  const bucket = new s3.Bucket(stack, 'Dest');
+
+  // WHEN
+  new s3deploy.BucketDeployment(stack, 'Deploy', {
+    sources: [s3deploy.Source.asset(path.join(__dirname, 'my-website'))],
+    destinationBucket: bucket,
+    syncOptions: ['--size-only'],
+  });
+
+  // THEN
+  Template.fromStack(stack).hasResourceProperties('Custom::CDKBucketDeployment', {
+    SyncOptions: ['--size-only'],
+  });
+});
